@@ -1,0 +1,62 @@
+## question no.1
+
+CREATE DATABASE db;
+use db;
+
+CREATE TABLE consultants
+(CST_IDNO int not null primary key,
+CST_LNAME varchar(255),
+CST_FNAME varchar(255));
+
+INSERT INTO consultants (CST_IDNO, CST_LNAME, CST_FNAME)
+VALUES (127323, 'Robbin', 'Michale'),
+(526689, 'Snares', 'Carlos'),
+(843795, 'Dosio', 'Enric'),
+(328717, 'Snares', 'Jhon'),
+(444527, 'Dosni', 'Joseph'),
+(659831, 'Zanifer', 'Emily'),
+(847674, 'Sitaraman', 'Petr'),
+(748681, 'Gabriel', 'Henry');
+
+CREATE TABLE expertise_details
+(EXP_NO int not null primary key, 
+EXP_NAME varchar(255), 
+Score int);
+
+INSERT INTO expertise_details (EXP_NO, EXP_NAME, Score)
+VALUES (0001, 'Engineering consultant', 50),
+(0002, 'Educational consultant', 40),
+(0003, 'Business transformation consultant', 30),
+(0004, 'IT consultant', 70),
+(0005, 'Process consultant', 60),
+(0006, 'Performance consultant', 30),
+(0007, 'Sales consultant', 50);
+
+CREATE TABLE consultants_expertise
+(cst_IDNO int not null foreign key references consultants(CST_IDNO),
+exp_ID int not null foreign key references expertise_details(EXP_NO));
+
+INSERT INTO consultants_expertise (cst_IDNO, exp_ID)
+VALUES (127323, 0001),
+(127323, 0004),
+(526689, 0002),
+(843795, 0003),
+(843795, 0006),
+(328717, 0005),
+(328717, 0007),
+(444527, 0004),
+(444527, 0005),
+(659831, 0001),
+(847674, 0007),
+(748681, 0002),
+(748681, 0005);
+
+## question no.2
+
+SELECT top 3 S.sumScore, CONCAT(C.CST_FNAME, ' ', C.CST_LNAME) as NAME
+FROM (SELECT distinct CE.cst_IDNO, sum(e.Score) as sumScore
+FROM consultants_expertise CE 
+right join expertise_details e on e.EXP_NO=CE.exp_ID
+GROUP BY CE.cst_IDNO) as S, consultants C
+WHERE S.cst_IDNO=C.CST_IDNO
+ORDER BY S.sumScore desc;
